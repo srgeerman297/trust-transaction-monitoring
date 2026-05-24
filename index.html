@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fraugster-style Trust Firm Transaction Monitoring Demo - FIU Aruba Scenario</title>
+<style>
+:root{
+  --bg:#eef5f8; --panel:#ffffff; --line:#d7e2e8; --text:#10232e; --muted:#6b7d88;
+  --nav:#05232c; --nav2:#082d39; --brand:#ff563e; --green:#15b66d; --red:#ff4d59;
+  --blue:#1597e5; --amber:#ffb224; --purple:#7c4dff; --shadow:0 2px 9px rgba(16,35,46,.10);
+  --radius:6px; --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;overflow:hidden}
+.app{display:grid;grid-template-columns:250px 1fr;height:100vh;min-width:1180px}
+.sidebar{background:var(--nav);color:#cbd8de;display:flex;flex-direction:column;height:100vh}
+.logo{height:78px;background:var(--brand);display:flex;align-items:center;padding:0 24px;color:#fff;font-size:34px;font-weight:700;letter-spacing:-1px}
+.logo .mark{font-size:24px;margin-right:3px;font-weight:400}.nav{padding-top:46px;flex:1}.nav-item{height:74px;display:flex;align-items:center;gap:22px;padding:0 32px;color:#c7d5dc;text-decoration:none;cursor:pointer;font-size:18px;border-left:4px solid transparent;transition:.15s;background:transparent}.nav-item:hover{background:#082a34}.nav-item.active{background:#102f3a;color:#fff;border-left-color:#7bd2ff}.nav-item .ico{width:23px;text-align:center;font-size:20px;font-weight:700}.submenu{display:none;background:#031b22;padding:10px 0 16px 54px}.nav-group.open .submenu{display:block}.submenu a{display:block;color:#a9b9c1;text-decoration:none;padding:12px 0;font-size:16px;cursor:pointer}.submenu a.active,.submenu a:hover{color:#fff}.collapse{height:62px;background:#031b22;color:#aab8bf;display:flex;align-items:center;padding:0 14px;gap:12px;font-size:15px}.main{height:100vh;display:flex;flex-direction:column;overflow:hidden}.topbar{height:78px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 48px 0 24px}.searchbar{display:flex;height:43px;border:1px solid #cdd9df;border-radius:5px;overflow:hidden;background:#fff;width:620px}.searchbar select{border:0;border-right:1px solid #dbe5ea;padding:0 18px;background:#fff;color:#2c4350;font-size:15px}.searchbar input{border:0;outline:0;flex:1;padding:0 14px;color:#60717c;font-size:15px}.searchbar button{border:0;background:#fff;width:46px;font-size:22px;color:#173441;cursor:pointer}.top-actions{display:flex;align-items:center;gap:28px;color:#0c2632}.bell{font-size:22px;cursor:pointer;position:relative}.bell.alert::after{content:"";position:absolute;right:0;top:1px;width:9px;height:9px;background:var(--red);border-radius:50%}.user{display:flex;align-items:center;gap:12px}.avatar{width:48px;height:48px;border-radius:50%;background:#86ab41;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px}.content{padding:22px 84px 50px 84px;overflow:auto;height:calc(100vh - 78px)}.breadcrumb{color:#7b8d98;margin:2px 0 22px 0}.breadcrumb b{color:#253944}.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.filters{display:flex;gap:8px;align-items:center}.inputlike,.btn,select.inputlike{height:44px;border:1px solid #cbd9df;background:#fff;border-radius:5px;padding:0 13px;font-size:15px;color:#122c38;box-shadow:0 1px 1px rgba(0,0,0,.02)}.inputlike{display:flex;align-items:center;gap:14px}.btn{display:inline-flex;align-items:center;gap:10px;cursor:pointer;border-color:#dae4e9;box-shadow:var(--shadow);font-weight:500}.btn:hover{filter:brightness(.98)}.btn.primary{background:#0b2f3b;color:white;border-color:#0b2f3b}.btn.red{background:#ffefe9;color:#b72d20;border-color:#ffd5cc}.btn.green{background:#eafaf2;color:#087a47;border-color:#c4efd9}.btn.small{height:34px;font-size:13px;padding:0 10px;box-shadow:none}.grid{display:grid;gap:20px}.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:1fr 1fr 1fr}.card{background:var(--panel);border:1px solid #dfe8ed;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.card-header{height:70px;padding:0 21px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;font-size:21px;font-weight:500}.card-body{padding:22px}.metric-label{color:#687c87;font-size:16px;margin-bottom:9px}.metric-value{font-size:29px;letter-spacing:.2px;margin-bottom:20px}.bar{height:13px;background:#e8eef2;display:flex;overflow:hidden}.bar .ok{height:100%;background:var(--green)}.bar .bad{height:100%;background:var(--red)}.stat-card .card-header{font-size:20px;height:70px}.stat-card .metric-value{font-weight:700}.chart-wrap{height:260px;position:relative}.legend{display:flex;align-items:center;gap:8px;color:#778a94;margin-top:11px}.swatch{width:14px;height:14px;background:var(--blue)}.linechart svg{width:100%;height:235px;display:block}.axis text{font-size:12px;fill:#74848d}.gridline{stroke:#d7e2e8;stroke-width:1}.series{fill:none;stroke:#1597e5;stroke-width:3}.threshold{stroke:#ff9f1c;stroke-dasharray:5 4;stroke-width:2}.tooltip-label{font-size:13px;fill:#1b2f3a}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:5px 10px;font-weight:650;font-size:12px;white-space:nowrap}.pill.green{background:#e6f7ef;color:#067343}.pill.red{background:#ffe8e9;color:#bc2a35}.pill.blue{background:#e9f5ff;color:#126ba5}.pill.amber{background:#fff5df;color:#936300}.pill.gray{background:#edf2f5;color:#5c6b73}.pill.purple{background:#f0ebff;color:#5630bd}.table{width:100%;border-collapse:collapse}.table th,.table td{border-bottom:1px solid #e1eaee;text-align:left;padding:13px 12px;vertical-align:top}.table th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#71828c;background:#f6fafc}.table tr:hover td{background:#fbfdfe}.right{text-align:right!important}.nowrap{white-space:nowrap}.muted{color:var(--muted)}.section-title{font-size:28px;margin:0 0 18px 0;font-weight:650}.view{display:none}.view.active{display:block}.demo-controls{display:flex;gap:10px;align-items:center;margin-left:10px}.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:20px}.kpi{background:#fff;border:1px solid #dfe8ed;border-radius:6px;box-shadow:var(--shadow);padding:18px}.kpi .label{font-size:13px;color:#687c87;text-transform:uppercase;letter-spacing:.06em}.kpi .num{font-size:28px;font-weight:750;margin-top:8px}.kpi .sub{color:#6d808b;margin-top:5px}.split{display:grid;grid-template-columns:1.15fr .85fr;gap:20px}.drawer{position:fixed;right:-520px;top:0;width:520px;height:100vh;background:#fff;box-shadow:-12px 0 30px rgba(0,0,0,.18);z-index:50;transition:right .2s ease;display:flex;flex-direction:column;border-left:1px solid #dbe6eb}.drawer.open{right:0}.drawer-head{height:78px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px}.drawer-head h3{margin:0;font-size:22px}.drawer-body{padding:22px;overflow:auto}.close{border:0;background:#eef3f6;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:20px}.detail-row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #edf2f5;gap:20px}.detail-row span:first-child{color:#657781}.detail-row span:last-child{text-align:right;font-weight:600}.modal-bg{position:fixed;inset:0;background:rgba(1,18,24,.55);z-index:80;display:none;align-items:center;justify-content:center}.modal-bg.show{display:flex}.modal{width:680px;background:#fff;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden}.modal-head{height:68px;border-bottom:1px solid var(--line);padding:0 22px;display:flex;align-items:center;justify-content:space-between}.modal-head h3{margin:0;font-size:22px}.modal-body{padding:22px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field label{display:block;color:#657781;font-size:13px;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid #ccd9df;border-radius:5px;padding:10px 11px;font:inherit}.field textarea{min-height:92px;resize:vertical}.modal-actions{padding:16px 22px;background:#f7fafc;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}.toast{position:fixed;right:22px;bottom:22px;background:#0b2f3b;color:white;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.2);padding:14px 18px;z-index:100;display:none;max-width:420px}.toast.show{display:block;animation:fade .25s}@keyframes fade{from{transform:translateY(8px);opacity:.3}to{transform:none;opacity:1}}.rule-card{display:grid;grid-template-columns:1fr auto;gap:16px;padding:18px;border-bottom:1px solid #e1eaee}.rule-title{font-size:18px;font-weight:700;margin-bottom:6px}.rule-desc{color:#607580;line-height:1.45}.actions-row{display:flex;gap:8px;align-items:center;justify-content:flex-end}.empty{padding:40px;text-align:center;color:#6c7e88}.listbox{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.list-card{padding:18px}.list-card h3{margin:0 0 8px;font-size:19px}.list-card .count{font-size:34px;font-weight:750}.review-card{display:grid;grid-template-columns:1fr auto;gap:12px;padding:17px;border-bottom:1px solid #e4ecef}.review-card h4{margin:0 0 7px;font-size:17px}.review-card p{margin:0;color:#627681;line-height:1.4}.badge-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}.dot-red{background:var(--red)}.dot-amber{background:var(--amber)}.dot-green{background:var(--green)}.notice{border-left:4px solid var(--blue);background:#eef8ff;padding:14px 15px;color:#244b5f;margin-bottom:18px}.fiu-notice{border-left:4px solid var(--red);background:#fff1f2;padding:14px 15px;color:#66212a;margin-bottom:18px}.progress{height:9px;background:#e7eef2;border-radius:10px;overflow:hidden}.progress span{display:block;height:100%;background:#1597e5}.checklist{display:grid;gap:9px;margin-top:12px}.check{display:flex;align-items:flex-start;gap:9px;color:#394e59}.check:before{content:"✓";background:#e6f7ef;color:#087a47;font-weight:900;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;flex:none}.page-footer-note{margin-top:18px;color:#748690;font-size:13px;line-height:1.5}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.mini-chart{height:110px}.mini-chart svg{width:100%;height:100%}
+@media print{body{overflow:visible}.app{display:block;height:auto}.sidebar,.topbar,.toolbar,.drawer,.modal-bg,.toast{display:none!important}.content{height:auto;overflow:visible;padding:20px}.view{display:block!important;page-break-after:always}.card{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo"><span class="mark">▦</span>Fraugster</div>
+    <nav class="nav">
+      <div class="nav-item" data-route="dashboard"><span class="ico">◔</span><span>Dashboard</span></div>
+      <div class="nav-item" data-route="transactions"><span class="ico">↔</span><span>Transactions</span></div>
+      <div class="nav-group open">
+        <div class="nav-item active" data-route="reports"><span class="ico">▥</span><span>Reports</span></div>
+        <div class="submenu">
+          <a data-route="reports" class="active">Reports</a>
+          <a data-route="schedule">Schedule</a>
+        </div>
+      </div>
+      <div class="nav-item" data-route="rules"><span class="ico">＋</span><span>Rule manager</span></div>
+      <div class="nav-item" data-route="review"><span class="ico">▣</span><span>Manual review</span></div>
+      <div class="nav-item" data-route="lists"><span class="ico">☷</span><span>Lists</span></div>
+    </nav>
+    <div class="collapse">≪ <span>Collapse</span></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="searchbar">
+        <select id="searchType"><option>Transactions</option><option>Trust Clients</option><option>Fraugster ID</option><option>FIU Case ID</option></select>
+        <input id="globalSearch" placeholder="Search by Transaction/Order/Client/Fraugster ID" />
+        <button id="searchBtn">⌕</button>
+      </div>
+      <div class="top-actions">
+        <div class="bell" id="bell">♧</div>
+        <div class="user"><div class="avatar">D</div><span>Demo User⌄</span></div>
+      </div>
+    </header>
+
+    <section class="content">
+      <div class="breadcrumb">Home&nbsp; &gt;&nbsp; <b id="crumb">Reports</b></div>
+
+      <div class="toolbar">
+        <div class="filters">
+          <div class="inputlike" id="dateRange">13 Aug 2023 - 23 May 2026 <span>⚑</span><span>▣</span></div>
+          <select class="inputlike" id="merchantSelect"><option>All trust clients</option><option>Oranje Trust Services</option><option>Caribbean Fiduciary Group</option><option>Aruba Corporate Admin VBA</option></select>
+          <div class="demo-controls">
+            <button class="btn green" id="startLive">▶ Live feed</button>
+            <button class="btn red" id="injectSpike">⚠ Inject AWG 500k+ transfer</button>
+            <button class="btn" id="resetDemo">↺ Reset</button>
+          </div>
+        </div>
+        <div class="filters">
+          <button class="btn" id="printBtn">▦ Save snapshot</button>
+          <button class="btn primary" id="sendReport">▶ FIU report package</button>
+        </div>
+      </div>
+
+      <div id="view-reports" class="view active">
+        <div class="grid two">
+          <div class="card">
+            <div class="card-header">Final approval rate</div>
+            <div class="card-body">
+              <div class="metric-label">Value</div><div class="metric-value" id="approvalValue">89.59%</div>
+              <div class="bar"><div class="ok" style="width:89.59%"></div><div class="bad" style="width:10.41%"></div></div>
+              <div style="height:28px"></div>
+              <div class="metric-label">Count</div><div class="metric-value" id="approvalCount">91.66%</div>
+              <div class="bar"><div class="ok" style="width:91.66%"></div><div class="bad" style="width:8.34%"></div></div>
+            </div>
+          </div>
+          <div class="card linechart">
+            <div class="card-header">Transactions <span class="pill amber">FIU threshold: Afl. 500,000</span></div>
+            <div class="card-body"><div class="metric-label">Count</div><div class="chart-wrap" id="mainChart"></div><div class="legend"><span class="swatch"></span> <span>14 Aug 2023 - 23 May 2026</span></div></div>
+          </div>
+        </div>
+        <div style="height:20px"></div>
+        <div class="grid three">
+          <div class="card stat-card"><div class="card-header">Total transfers</div><div class="card-body"><div class="metric-label">Value</div><div class="metric-value" id="totalValue">27,650,776.20 AWG</div><div class="metric-label">Count</div><div class="metric-value" id="totalCount">249,235</div></div></div>
+          <div class="card stat-card"><div class="card-header">Cleared by monitoring</div><div class="card-body"><div class="metric-label">Value</div><div class="metric-value" id="clearedValue">24,946,331.10 AWG</div><div class="metric-label">Count</div><div class="metric-value" id="clearedCount">230,294</div></div></div>
+          <div class="card stat-card"><div class="card-header">FIU candidate transfers</div><div class="card-body"><div class="metric-label">Value</div><div class="metric-value" id="finalValue">14,812,817.68 AWG</div><div class="metric-label">Count</div><div class="metric-value" id="finalCount">139,684</div></div></div>
+        </div>
+        <div style="height:20px"></div>
+        <div class="grid two">
+          <div class="card"><div class="card-header">Decline: Fraugster vs issuer</div><div class="card-body"><div id="declineChart" class="mini-chart"></div><p class="page-footer-note">Simulated split between platform-detected high-risk activity and issuer-side declines.</p></div></div>
+          <div class="card"><div class="card-header">Objective FIU indicators triggered</div><div class="card-body" id="indicatorSummary"></div></div>
+        </div>
+      </div>
+
+      <div id="view-dashboard" class="view">
+        <h1 class="section-title">Trust Firm Monitoring Dashboard</h1>
+        <div class="fiu-notice"><b>Demo scenario:</b> a trust office monitors client transfers. Giro / cashless transfers of <b>Afl. 500,000 or more</b> are automatically flagged as FIU objective-indicator candidates for compliance review.</div>
+        <div class="kpi-row">
+          <div class="kpi"><div class="label">Today monitored</div><div class="num" id="kpiToday">1,248</div><div class="sub">Trust-client transfers</div></div>
+          <div class="kpi"><div class="label">FIU threshold hits</div><div class="num" id="kpiFlags">7</div><div class="sub">Afl. 500k+ transfers</div></div>
+          <div class="kpi"><div class="label">Pending MLCO review</div><div class="num" id="kpiReview">5</div><div class="sub">Requires decision</div></div>
+          <div class="kpi"><div class="label">Package readiness</div><div class="num" id="kpiReady">82%</div><div class="sub">Required fields present</div></div>
+        </div>
+        <div class="split">
+          <div class="card"><div class="card-header">Live transfer feed <button class="btn small" id="dashSpike">Inject case</button></div><div class="card-body" style="padding:0"><table class="table" id="liveFeed"></table></div></div>
+          <div class="card"><div class="card-header">Compliance queue</div><div class="card-body" id="queuePanel"></div></div>
+        </div>
+      </div>
+
+      <div id="view-transactions" class="view">
+        <h1 class="section-title">Transactions</h1>
+        <div class="notice">Click any transaction row to open the simulated review drawer. Use search to filter by client, transaction ID, country, or FIU status.</div>
+        <div class="card"><div class="card-header">Transaction list <button class="btn small" id="exportCsv">Export CSV</button></div><div class="card-body" style="padding:0"><table class="table" id="txTable"></table></div></div>
+      </div>
+
+      <div id="view-schedule" class="view">
+        <h1 class="section-title">Schedule</h1>
+        <div class="grid two">
+          <div class="card"><div class="card-header">Scheduled compliance reports</div><div class="card-body" id="scheduleList"></div></div>
+          <div class="card"><div class="card-header">Create schedule</div><div class="card-body"><div class="form-grid"><div class="field"><label>Report type</label><select id="schedType"><option>Daily FIU threshold exceptions</option><option>Weekly MLCO review pack</option><option>Monthly board compliance summary</option></select></div><div class="field"><label>Frequency</label><select id="schedFreq"><option>Daily 08:00</option><option>Weekly Monday 09:00</option><option>Monthly 1st business day</option></select></div><div class="field"><label>Recipient</label><input id="schedEmail" value="mlco@trustfirm-demo.com"></div><div class="field"><label>Status</label><select id="schedStatus"><option>Active</option><option>Paused</option></select></div></div><p></p><button class="btn primary" id="createSchedule">Create schedule</button></div></div>
+        </div>
+      </div>
+
+      <div id="view-rules" class="view">
+        <h1 class="section-title">Rule Manager</h1>
+        <div class="fiu-notice"><b>Core rule for Monday demo:</b> Flag a giro / cashless transfer of <b>Afl. 500,000 or more</b> for FIU objective-indicator review. The platform should create evidence, not just an alert.</div>
+        <div class="card"><div class="card-header">Active rules <button class="btn small" id="newRuleBtn">＋ Add rule</button></div><div id="rulesList"></div></div>
+      </div>
+
+      <div id="view-review" class="view">
+        <h1 class="section-title">Manual Review</h1>
+        <div class="split">
+          <div class="card"><div class="card-header">Pending review cases</div><div id="reviewList"></div></div>
+          <div class="card"><div class="card-header">Reviewed decisions</div><div id="reviewedList"></div></div>
+        </div>
+      </div>
+
+      <div id="view-lists" class="view">
+        <h1 class="section-title">Lists</h1>
+        <div class="listbox">
+          <div class="card list-card"><h3>High-risk jurisdictions</h3><div class="count" id="countryCount">12</div><p class="muted">Routes receiving enhanced monitoring.</p><button class="btn small" data-addlist="country">Add jurisdiction</button></div>
+          <div class="card list-card"><h3>PEP / director watchlist</h3><div class="count" id="pepCount">37</div><p class="muted">Demo names only; no real client data.</p><button class="btn small" data-addlist="pep">Add person</button></div>
+          <div class="card list-card"><h3>Client risk list</h3><div class="count" id="clientCount">18</div><p class="muted">Trust clients receiving higher scrutiny.</p><button class="btn small" data-addlist="client">Add client</button></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<aside class="drawer" id="drawer"><div class="drawer-head"><h3 id="drawerTitle">Transaction</h3><button class="close" id="closeDrawer">×</button></div><div class="drawer-body" id="drawerBody"></div></aside>
+
+<div class="modal-bg" id="modalBg"><div class="modal"><div class="modal-head"><h3 id="modalTitle">Send report</h3><button class="close" id="closeModal">×</button></div><div class="modal-body" id="modalBody"></div><div class="modal-actions" id="modalActions"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const fmtMoney = n => n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' AWG';
+const fmtNum = n => n.toLocaleString('en-US');
+let liveTimer=null;
+let state={
+  route:'reports',
+  selectedMerchant:'All trust clients',
+  listCounts:{country:12,pep:37,client:18},
+  schedules:[
+    {type:'Daily FIU threshold exceptions',freq:'Daily 08:00',recipient:'mlco@trustfirm-demo.com',status:'Active'},
+    {type:'Weekly MLCO review pack',freq:'Weekly Monday 09:00',recipient:'board@trustfirm-demo.com',status:'Active'}
+  ],
+  reviewed:[],
+  rules:[
+    {id:'R-130103',title:'FIU objective indicator 130103: Giro / cashless transfer ≥ Afl. 500,000',desc:'Automatically flags any giro or cashless transfer of Afl. 500,000 or more by a trust-client relationship. Route to MLCO review and prepare FIU package checklist.',status:'Active',severity:'Mandatory review',kind:'FIU'},
+    {id:'R-CTR-002',title:'Rapid movement through fiduciary account',desc:'Flags incoming and outgoing movement within 24 hours when total value exceeds Afl. 250,000 and economic rationale is missing.',status:'Active',severity:'Enhanced due diligence',kind:'Risk'},
+    {id:'R-PEP-014',title:'Director or UBO appears on internal PEP watchlist',desc:'Applies enhanced review if a related UBO, director, protector, settlor, or authorized signatory appears on a PEP or high-risk list.',status:'Active',severity:'EDD',kind:'List'},
+    {id:'R-GEO-010',title:'High-risk jurisdiction route',desc:'Flags transactions routed through jurisdictions maintained in the high-risk jurisdiction list.',status:'Active',severity:'Review',kind:'Geo'}
+  ],
+  tx:[
+    {id:'TX-884201',client:'Blue Harbor Foundation',merchant:'Oranje Trust Services',type:'Giro transfer',amount:742500,cur:'AWG',country:'Panama',date:'2026-05-23 09:42',status:'FIU candidate',risk:96,ubo:'R.M. Croes',reason:'Transfer exceeds Afl. 500,000 objective threshold',fiu:'Indicator 130103'},
+    {id:'TX-884177',client:'Sunset Holdings NV',merchant:'Caribbean Fiduciary Group',type:'Cashless transfer',amount:518900,cur:'AWG',country:'Curaçao',date:'2026-05-23 09:18',status:'Pending review',risk:88,ubo:'J.A. Tromp',reason:'Afl. 500,000+ transfer with new counterparty',fiu:'Indicator 130103'},
+    {id:'TX-884122',client:'Palm Estate Structure',merchant:'Aruba Corporate Admin VBA',type:'Management fee',amount:18500,cur:'AWG',country:'Aruba',date:'2026-05-23 08:55',status:'Cleared',risk:18,ubo:'M. Oduber',reason:'Expected recurring invoice',fiu:'None'},
+    {id:'TX-884099',client:'Coral Private Trust',merchant:'Oranje Trust Services',type:'Giro transfer',amount:499950,cur:'AWG',country:'Aruba',date:'2026-05-23 08:21',status:'Monitor',risk:62,ubo:'E. Kelly',reason:'Near-threshold transfer',fiu:'Below threshold'},
+    {id:'TX-883991',client:'Caya Investment Ltd',merchant:'Caribbean Fiduciary Group',type:'Cashless transfer',amount:1200000,cur:'AWG',country:'BVI',date:'2026-05-22 16:02',status:'FIU draft',risk:98,ubo:'L. Maduro',reason:'Afl. 500,000+ and high-risk jurisdiction route',fiu:'Indicator 130103'},
+    {id:'TX-883870',client:'Mar Azul Administration',merchant:'Aruba Corporate Admin VBA',type:'Dividend distribution',amount:245000,cur:'AWG',country:'Netherlands',date:'2026-05-22 14:37',status:'Cleared',risk:28,ubo:'D. Arends',reason:'Board-approved distribution within profile',fiu:'None'}
+  ]
+};
+
+function showToast(msg){const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3300)}
+function routeTo(route){state.route=route;document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById('view-'+route).classList.add('active');document.querySelectorAll('.nav-item,.submenu a').forEach(n=>n.classList.remove('active'));document.querySelectorAll(`[data-route="${route}"]`).forEach(n=>n.classList.add('active'));document.getElementById('crumb').textContent=route[0].toUpperCase()+route.slice(1).replace('rules','Rule manager').replace('review','Manual review');renderAll();location.hash=route}
+function statusPill(status){let cls=status.includes('FIU')?'red':status.includes('Pending')?'amber':status.includes('Cleared')?'green':status.includes('Monitor')?'blue':'gray';return `<span class="pill ${cls}">${status}</span>`}
+function riskPill(r){let cls=r>85?'red':r>60?'amber':'green';return `<span class="pill ${cls}">${r}</span>`}
+function filteredTx(){let q=document.getElementById('globalSearch').value.toLowerCase().trim();return state.tx.filter(x=>(state.selectedMerchant==='All trust clients'||x.merchant===state.selectedMerchant) && (!q || Object.values(x).join(' ').toLowerCase().includes(q)))}
+function renderMainChart(){
+  const el=document.getElementById('mainChart'); if(!el) return;
+  const points=[0,0,0,0,0,0,0,836,836,836,836,760,742,736,719]; const max=900,w=640,h=220,p=34;
+  const xs=points.map((_,i)=>p+i*(w-2*p)/(points.length-1)); const ys=points.map(v=>h-p-(v/max)*(h-2*p));
+  const path=points.map((v,i)=>(i?'L':'M')+xs[i]+','+ys[i]).join(' ');
+  const labels=['14 Aug','19 Dec','24 Apr','29 Aug','03 Jan','10 May','14 Sep','19 Jan'];
+  el.innerHTML=`<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+  ${[0,200,400,600,800].map(v=>`<line class="gridline" x1="${p}" x2="${w-p}" y1="${h-p-(v/max)*(h-2*p)}" y2="${h-p-(v/max)*(h-2*p)}"/>`).join('')}
+  <line class="threshold" x1="${p}" x2="${w-p}" y1="${h-p-(500/max)*(h-2*p)}" y2="${h-p-(500/max)*(h-2*p)}"/>
+  <path class="series" d="${path}"/>
+  <g class="axis">${[0,200,400,600,800].map(v=>`<text x="0" y="${h-p-(v/max)*(h-2*p)+4}">${v}</text>`).join('')}${labels.map((l,i)=>`<text x="${p+i*(w-2*p)/(labels.length-1)-17}" y="${h-4}">${l}</text>`).join('')}</g>
+  <rect x="${xs[7]-34}" y="${ys[7]-22}" width="67" height="22" fill="#f7fafc" stroke="#9db0ba"/><text class="tooltip-label" x="${xs[7]-27}" y="${ys[7]-6}">Max:836</text>
+  <rect x="${p-20}" y="${h-p-27}" width="48" height="22" fill="#f7fafc" stroke="#9db0ba"/><text class="tooltip-label" x="${p-14}" y="${h-p-11}">Min:0</text>
+  <text x="${w-177}" y="${h-p-(500/max)*(h-2*p)-7}" fill="#936300" font-size="13">Afl. 500k threshold line</text>
+  </svg>`;
+}
+function renderDecline(){const el=document.getElementById('declineChart'); if(!el)return; el.innerHTML=`<svg viewBox="0 0 420 110"><line x1="35" x2="390" y1="90" y2="90" stroke="#d7e2e8"/><rect x="60" y="35" width="70" height="55" fill="#1597e5"/><rect x="165" y="58" width="70" height="32" fill="#ff4d59"/><rect x="270" y="22" width="70" height="68" fill="#15b66d"/><text x="58" y="104" font-size="12" fill="#6b7d88">Fraugster</text><text x="176" y="104" font-size="12" fill="#6b7d88">Issuer</text><text x="272" y="104" font-size="12" fill="#6b7d88">Cleared</text></svg>`}
+function renderIndicatorSummary(){const hits=state.tx.filter(t=>t.amount>=500000).length; const val=state.tx.filter(t=>t.amount>=500000).reduce((a,b)=>a+b.amount,0); document.getElementById('indicatorSummary').innerHTML=`<div class="detail-row"><span>Indicator 130103 hits</span><span>${hits}</span></div><div class="detail-row"><span>Total value affected</span><span>${fmtMoney(val)}</span></div><div class="detail-row"><span>Pending MLCO decision</span><span>${state.tx.filter(t=>t.status.includes('Pending')||t.status.includes('candidate')).length}</span></div><div class="checklist"><div class="check">Automatic case creation</div><div class="check">Evidence checklist generated</div><div class="check">Manual review decision required</div><div class="check">FIU package can be drafted from case data</div></div>`}
+function renderTransactions(){
+ const rows=filteredTx(); const tbl=document.getElementById('txTable'); if(!tbl)return;
+ tbl.innerHTML=`<thead><tr><th>Transaction ID</th><th>Trust client</th><th>Type</th><th class="right">Amount</th><th>Route</th><th>Risk</th><th>Status</th><th>FIU basis</th></tr></thead><tbody>${rows.map(x=>`<tr data-id="${x.id}" class="tx-row"><td class="mono">${x.id}</td><td><b>${x.client}</b><br><span class="muted">${x.merchant}</span></td><td>${x.type}<br><span class="muted">${x.date}</span></td><td class="right nowrap"><b>${fmtMoney(x.amount)}</b></td><td>${x.country}</td><td>${riskPill(x.risk)}</td><td>${statusPill(x.status)}</td><td>${x.fiu}</td></tr>`).join('')}</tbody>`;
+ document.querySelectorAll('.tx-row').forEach(r=>r.onclick=()=>openDrawer(r.dataset.id));
+}
+function renderLiveFeed(){const tbl=document.getElementById('liveFeed'); if(!tbl)return; const rows=state.tx.slice(0,6); tbl.innerHTML=`<thead><tr><th>Time</th><th>Client</th><th class="right">Amount</th><th>Status</th></tr></thead><tbody>${rows.map(x=>`<tr data-id="${x.id}" class="tx-row"><td>${x.date.split(' ')[1]}</td><td>${x.client}<br><span class="muted">${x.country}</span></td><td class="right"><b>${fmtMoney(x.amount)}</b></td><td>${statusPill(x.status)}</td></tr>`).join('')}</tbody>`;document.querySelectorAll('#liveFeed .tx-row').forEach(r=>r.onclick=()=>openDrawer(r.dataset.id));}
+function renderQueue(){const el=document.getElementById('queuePanel'); if(!el)return; const q=state.tx.filter(x=>x.status.includes('FIU')||x.status.includes('Pending')); el.innerHTML=q.map(x=>`<div class="review-card"><div><h4>${x.client}</h4><p>${x.reason}<br><b>${fmtMoney(x.amount)}</b> · ${x.country}</p></div><div>${statusPill(x.status)}</div></div>`).join('') || '<div class="empty">No cases pending.</div>'}
+function renderRules(){const el=document.getElementById('rulesList'); if(!el)return; el.innerHTML=state.rules.map(r=>`<div class="rule-card"><div><div class="rule-title">${r.title}</div><div class="rule-desc">${r.desc}</div><p>${statusPill(r.status)} <span class="pill blue">${r.severity}</span> <span class="pill gray">${r.id}</span></p></div><div class="actions-row"><button class="btn small" onclick="simulateRule('${r.id}')">Simulate</button><button class="btn small" onclick="toggleRule('${r.id}')">${r.status==='Active'?'Pause':'Activate'}</button></div></div>`).join('')}
+function renderReview(){const pending=document.getElementById('reviewList'); const reviewed=document.getElementById('reviewedList'); if(!pending)return; const q=state.tx.filter(x=>x.status.includes('FIU')||x.status.includes('Pending')); pending.innerHTML=q.map(x=>`<div class="review-card"><div><h4>${x.id} · ${x.client}</h4><p>${x.reason}<br>${fmtMoney(x.amount)} · ${x.country} · UBO/Director: ${x.ubo}</p></div><div class="actions-row"><button class="btn small primary" onclick="decision('${x.id}','FIU draft')">Draft FIU</button><button class="btn small" onclick="decision('${x.id}','No report')">No report</button></div></div>`).join('') || '<div class="empty">No pending review cases.</div>'; reviewed.innerHTML=state.reviewed.map(x=>`<div class="review-card"><div><h4>${x.id} · ${x.client}</h4><p>Decision: <b>${x.decision}</b><br>${x.when}</p></div>${statusPill(x.decision)}</div>`).join('') || '<div class="empty">No reviewed decisions yet.</div>'}
+function renderSchedule(){const el=document.getElementById('scheduleList'); if(!el)return; el.innerHTML=state.schedules.map(s=>`<div class="detail-row"><span><b>${s.type}</b><br><span class="muted">${s.freq} · ${s.recipient}</span></span><span>${statusPill(s.status)}</span></div>`).join('')}
+function renderLists(){document.getElementById('countryCount').textContent=state.listCounts.country;document.getElementById('pepCount').textContent=state.listCounts.pep;document.getElementById('clientCount').textContent=state.listCounts.client;}
+function renderKpis(){let flags=state.tx.filter(t=>t.amount>=500000).length; let pending=state.tx.filter(x=>x.status.includes('FIU')||x.status.includes('Pending')).length; if(document.getElementById('kpiFlags')){document.getElementById('kpiFlags').textContent=flags;document.getElementById('kpiReview').textContent=pending;document.getElementById('kpiToday').textContent=fmtNum(1248+state.tx.length);document.getElementById('kpiReady').textContent=Math.min(98,82+flags)+'%'}}
+function renderAll(){renderMainChart();renderDecline();renderIndicatorSummary();renderTransactions();renderLiveFeed();renderQueue();renderRules();renderReview();renderSchedule();renderLists();renderKpis();}
+function openDrawer(id){const x=state.tx.find(t=>t.id===id); if(!x)return; document.getElementById('drawerTitle').textContent=x.id; document.getElementById('drawerBody').innerHTML=`<div class="fiu-notice"><b>${x.status}</b><br>${x.reason}</div><div class="detail-row"><span>Trust client</span><span>${x.client}</span></div><div class="detail-row"><span>Service provider</span><span>${x.merchant}</span></div><div class="detail-row"><span>Transaction type</span><span>${x.type}</span></div><div class="detail-row"><span>Amount</span><span>${fmtMoney(x.amount)}</span></div><div class="detail-row"><span>Route / jurisdiction</span><span>${x.country}</span></div><div class="detail-row"><span>Date/time</span><span>${x.date}</span></div><div class="detail-row"><span>UBO / director reference</span><span>${x.ubo}</span></div><div class="detail-row"><span>Risk score</span><span>${riskPill(x.risk)}</span></div><div class="detail-row"><span>FIU basis</span><span>${x.fiu}</span></div><h3>FIU package checklist</h3><div class="checklist"><div class="check">Identity of client and related party captured</div><div class="check">Nature, time, and place of transaction captured</div><div class="check">Amount and currency captured</div><div class="check">Indicator basis documented</div><div class="check">Circumstances and risk rationale added</div></div><p></p><div class="actions-row"><button class="btn primary" onclick="decision('${x.id}','FIU draft')">Prepare FIU draft</button><button class="btn" onclick="decision('${x.id}','No report')">Document no report</button></div><p class="page-footer-note">Demo only: this does not submit to FIU Aruba. It simulates an internal package workflow.</p>`; document.getElementById('drawer').classList.add('open')}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open')}
+function injectTransfer(){const clients=['Blue Harbor Foundation','Sunset Holdings NV','Coral Private Trust','Caya Investment Ltd','Orchid Global Structure','Harbor View Admin']; const merch=['Oranje Trust Services','Caribbean Fiduciary Group','Aruba Corporate Admin VBA']; const countries=['Panama','Curaçao','BVI','Netherlands','Aruba','Sint Maarten']; const amount=500000+Math.floor(Math.random()*950000); const id='TX-'+Math.floor(885000+Math.random()*9000); const d=new Date(); const tx={id,client:clients[Math.floor(Math.random()*clients.length)],merchant:merch[Math.floor(Math.random()*merch.length)],type:Math.random()>.5?'Giro transfer':'Cashless transfer',amount,cur:'AWG',country:countries[Math.floor(Math.random()*countries.length)],date:d.toISOString().slice(0,16).replace('T',' '),status:'FIU candidate',risk:90+Math.floor(Math.random()*10),ubo:['A. Kelly','S. Geerman','R. Croes','P. Maduro'][Math.floor(Math.random()*4)],reason:'Transfer exceeds Afl. 500,000 objective threshold',fiu:'Indicator 130103'};state.tx.unshift(tx);document.getElementById('bell').classList.add('alert');renderAll();showToast(`New FIU candidate created: <b>${id}</b> for <b>${fmtMoney(amount)}</b>`); if(state.route==='transactions'||state.route==='dashboard') setTimeout(()=>openDrawer(id),350)}
+function liveTick(){const small=Math.random()<.75; if(small){const id='TX-'+Math.floor(890000+Math.random()*9000); state.tx.unshift({id,client:'Routine Client '+Math.floor(Math.random()*30),merchant:['Oranje Trust Services','Caribbean Fiduciary Group','Aruba Corporate Admin VBA'][Math.floor(Math.random()*3)],type:'Routine service payment',amount:Math.floor(4000+Math.random()*96000),cur:'AWG',country:'Aruba',date:new Date().toISOString().slice(0,16).replace('T',' '),status:'Cleared',risk:10+Math.floor(Math.random()*35),ubo:'Internal demo',reason:'Within expected client profile',fiu:'None'}); state.tx=state.tx.slice(0,50); renderAll()} else injectTransfer()}
+function startLive(){if(liveTimer){clearInterval(liveTimer);liveTimer=null;document.getElementById('startLive').textContent='▶ Live feed';showToast('Live feed paused.');return} liveTimer=setInterval(liveTick,2300);document.getElementById('startLive').textContent='Ⅱ Pause feed';showToast('Live monitoring feed started.');}
+function decision(id,dec){const tx=state.tx.find(t=>t.id===id); if(!tx)return; tx.status=dec; state.reviewed.unshift({...tx,decision:dec,when:new Date().toLocaleString()}); if(dec==='No report') tx.risk=Math.min(tx.risk,55); renderAll(); showToast(`Decision saved for <b>${id}</b>: ${dec}`)}
+function simulateRule(id){if(id==='R-130103') injectTransfer(); else showToast(`Rule ${id} simulation completed. One demo alert was evaluated.`)}
+function toggleRule(id){const r=state.rules.find(r=>r.id===id); if(r){r.status=r.status==='Active'?'Paused':'Active';renderRules();showToast(`${r.title} is now ${r.status}.`)}}
+function exportCSV(){const rows=filteredTx(); const csv=['id,client,provider,type,amount,currency,country,date,status,risk,ubo,reason,fiu'].concat(rows.map(x=>[x.id,x.client,x.merchant,x.type,x.amount,x.cur,x.country,x.date,x.status,x.risk,x.ubo,x.reason,x.fiu].map(v=>'"'+String(v).replaceAll('"','""')+'"').join(','))).join('\n'); const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='trust-transaction-monitoring-demo.csv';a.click();URL.revokeObjectURL(a.href);showToast('CSV export generated.');}
+function modal(title,body,actions){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modalActions').innerHTML=actions;document.getElementById('modalBg').classList.add('show')}
+function closeModal(){document.getElementById('modalBg').classList.remove('show')}
+function showFiuPackage(){const candidates=state.tx.filter(x=>x.status.includes('FIU')||x.amount>=500000); modal('Simulated FIU report package',`<div class="fiu-notice"><b>${candidates.length} candidate transactions</b> are ready for MLCO review or FIU draft preparation.</div><div class="detail-row"><span>Objective threshold</span><span>Afl. 500,000+</span></div><div class="detail-row"><span>Indicator</span><span>130103 - giro / cashless transfer</span></div><div class="detail-row"><span>Package status</span><span>${statusPill('Draft')}</span></div><h3>Included evidence</h3><div class="checklist"><div class="check">Client and related-party identifiers</div><div class="check">Transaction date, time, nature and amount</div><div class="check">Route, jurisdiction and counterparty notes</div><div class="check">Risk score and rule trigger</div><div class="check">MLCO decision log</div></div><p class="page-footer-note">This is a demo package only. It does not connect to FIU Aruba and does not submit a real unusual transaction report.</p>`,`<button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="closeModal();showToast('FIU package draft simulated. Nothing was submitted.')">Generate draft package</button>`)}
+function resetDemo(){location.reload()}
+function newRuleModal(){modal('Add monitoring rule',`<div class="form-grid"><div class="field"><label>Rule name</label><input id="nrName" value="Client transfer above custom threshold"></div><div class="field"><label>Threshold AWG</label><input id="nrAmt" value="500000"></div><div class="field"><label>Routing</label><select id="nrRoute"><option>MLCO review</option><option>Enhanced Due Diligence</option><option>Board report only</option></select></div><div class="field"><label>Status</label><select id="nrStatus"><option>Active</option><option>Paused</option></select></div><div class="field" style="grid-column:1/-1"><label>Description</label><textarea id="nrDesc">Flags trust-client transfers above the defined internal threshold.</textarea></div></div>`,`<button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="addRule()">Create rule</button>`)}
+function addRule(){const name=document.getElementById('nrName').value; const amt=document.getElementById('nrAmt').value; state.rules.unshift({id:'R-CUSTOM-'+Math.floor(Math.random()*999),title:name,desc:`Threshold: Afl. ${Number(amt).toLocaleString('en-US')}. ${document.getElementById('nrDesc').value}`,status:document.getElementById('nrStatus').value,severity:document.getElementById('nrRoute').value,kind:'Custom'});closeModal();renderRules();showToast('New monitoring rule created.')}
+function createSchedule(){state.schedules.unshift({type:document.getElementById('schedType').value,freq:document.getElementById('schedFreq').value,recipient:document.getElementById('schedEmail').value,status:document.getElementById('schedStatus').value});renderSchedule();showToast('Scheduled report created.')} 
+function addList(kind){state.listCounts[kind]++;renderLists();showToast('Demo list item added.')} 
+
+document.querySelectorAll('[data-route]').forEach(n=>n.addEventListener('click',()=>routeTo(n.dataset.route)));
+document.getElementById('merchantSelect').addEventListener('change',e=>{state.selectedMerchant=e.target.value;renderAll();showToast('Merchant/client filter applied.')});
+document.getElementById('searchBtn').onclick=()=>{routeTo('transactions');renderTransactions();showToast('Search applied to transactions.')} ;
+document.getElementById('globalSearch').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('searchBtn').click()});
+document.getElementById('startLive').onclick=startLive;document.getElementById('injectSpike').onclick=injectTransfer;document.getElementById('dashSpike').onclick=injectTransfer;document.getElementById('resetDemo').onclick=resetDemo;document.getElementById('printBtn').onclick=()=>window.print();document.getElementById('sendReport').onclick=showFiuPackage;document.getElementById('closeDrawer').onclick=closeDrawer;document.getElementById('closeModal').onclick=closeModal;document.getElementById('modalBg').addEventListener('click',e=>{if(e.target.id==='modalBg')closeModal()});document.getElementById('exportCsv').onclick=exportCSV;document.getElementById('newRuleBtn').onclick=newRuleModal;document.getElementById('createSchedule').onclick=createSchedule;document.querySelectorAll('[data-addlist]').forEach(b=>b.onclick=()=>addList(b.dataset.addlist));
+window.addEventListener('hashchange',()=>{const r=location.hash.replace('#',''); if(r&&document.getElementById('view-'+r)) routeTo(r)});
+renderAll(); if(location.hash){const r=location.hash.replace('#',''); if(document.getElementById('view-'+r)) routeTo(r)}
+</script>
+</body>
+</html>
