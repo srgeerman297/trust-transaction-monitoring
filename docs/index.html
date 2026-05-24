@@ -19,7 +19,20 @@
     const rawUrl = 'https://raw.githubusercontent.com/srgeerman297/trust-transaction-monitoring/main/index.html?v=' + Date.now();
     fetch(rawUrl)
       .then(r => { if(!r.ok) throw new Error('Could not fetch main demo file: ' + r.status); return r.text(); })
-      .then(html => { document.open(); document.write(html); document.close(); })
+      .then(html => {
+        // Runtime safety patch for the public Pages build:
+        // 1. Avoid using the reserved/global name "close" for the drawer button.
+        // 2. Stop live-feed objective triggers from force-opening the drawer repeatedly.
+        // This keeps the X button responsive even while Live Feed is running.
+        html = html
+          .replace('id="close">×</button>', 'id="drawerCloseBtn">×</button>')
+          .replace('close.onclick=()=>drawer.classList.remove(\'open\');', 'document.getElementById(\'drawerCloseBtn\').addEventListener(\'click\',function(e){e.preventDefault();e.stopPropagation();document.getElementById(\'drawer\').classList.remove(\'open\');});document.addEventListener(\'keydown\',function(e){if(e.key===\'Escape\')document.getElementById(\'drawer\').classList.remove(\'open\');});')
+          .replace('toast(`Objective threshold hit: ${t.id} · ${fmt(amount)}.`);openTx(t.id)}function live()', 'toast(`Objective threshold hit: ${t.id} · ${fmt(amount)}.`)}function live()')
+          .replace('toast(`Live feed started.`)', 'toast(`Live feed started. Alerts will not force-open the detail panel.`)');
+        document.open();
+        document.write(html);
+        document.close();
+      })
       .catch(err => {
         document.getElementById('status').innerHTML = '<h1 class="err">Demo could not load</h1><p>' + err.message + '</p><p>Open the repository file directly here: <a href="https://github.com/srgeerman297/trust-transaction-monitoring/blob/main/index.html">index.html on GitHub</a></p>';
       });
