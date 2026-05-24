@@ -25,53 +25,88 @@
       document.head.appendChild(s);
     });
   }
-  function row(doc,label,value,y){
-    const left=42,right=553,labelW=170,valX=left+labelW,w=right-valX;
-    const lines=doc.splitTextToSize(clean(value||'N/A'),w-16);
-    const h=Math.max(28,16+lines.length*12);
-    doc.rect(left,y,labelW,h); doc.rect(valX,y,right-valX,h);
-    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.text(label,left+8,y+18);
-    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(lines,valX+8,y+18);
-    return y+h;
+  function normalizeDate(v){
+    const s=clean(v);
+    const m=s.match(/(\d{4})[-/](\d{2})[-/](\d{2})/);
+    return m?`${m[2]}-${m[3]}-${m[1]}`:s||'N/A';
   }
-  function section(doc,title,y){
-    doc.setFillColor(0,0,0); doc.rect(42,y,511,22,'F');
-    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.text(title,50,y+15);
-    doc.setTextColor(0,0,0);
-    return y+22;
+  function normalizeTime(v){
+    const s=clean(v);
+    const m=s.match(/\b(\d{2}:\d{2})\b/);
+    return m?m[1]:'N/A';
+  }
+  function amountDisplay(d){
+    const n=Number(String(d.amount||'').replace(/,/g,''));
+    return (Number.isFinite(n)?n.toFixed(2):clean(d.amount||'0.00'))+' '+(d.currency||'AWG');
+  }
+  function defaultSubject(){
+    return {short:'R.M. Croes',role:'Opdrachtgever',isClient:'Klant',last:'Croes',married:'',initials:'R.M.',first:'Roberto Miguel',gender:'man',birth:'04-18-1978',birthCity:'Oranjestad',birthCountry:'Aruba',nationality:'Dutch',idType:'Paspoort',idNumber:'AUA302912',idIssue:'01-15-2026',idExpiry:'01-15-2031',idPlace:'Censo Aruba',idCountry:'Aruba',street:'Caya Betico Croes',house:'45',addon:'',city:'Oranjestad',postcode:'00000',country:'Aruba',phone:'+297 555 0120',email:'client@example.com'};
   }
   async function downloadPdf(){
     const d=parseXml();
     const jsPDF=await ensureJsPdf();
-    const doc=new jsPDF({unit:'pt',format:'a4'});
-    const pageW=595.28;
-    doc.setProperties({title:'FIU transfer package '+(d.case_reference||''),subject:'Fictional demo FIU reporting package',creator:'AXIOMA Trust TM Demo'});
-    doc.setFillColor(0,0,0); doc.rect(42,42,511,30,'F');
-    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(15); doc.text('MELDFORMULIER ONGEBRUIKELIJKE TRANSACTIES',pageW/2,62,{align:'center'});
-    doc.setTextColor(0,0,0); doc.rect(42,72,511,106);
-    doc.setFillColor(35,169,214); doc.rect(220,96,68,68,'F');
-    doc.setTextColor(255,255,255); doc.setFontSize(18); doc.text('FIU',254,136,{align:'center'});
-    doc.setTextColor(0,0,0); doc.setFontSize(15); doc.text('Financial Intelligence Unit of Aruba',320,123);
-    doc.setTextColor(26,166,211); doc.text('MOT',320,143);
-    doc.setTextColor(0,0,0);
-    let y=198;
-    y=section(doc,'Naam melder',y);
-    y=row(doc,'Handelsnaam:','Axioma',y);
-    y=row(doc,'Meldingsnummer:',d.case_reference||'N/A',y);
-    y=section(doc,'Transactiegegevens',y+14);
-    y=row(doc,'Datum transactie:',d.transaction_date||'N/A',y);
-    y=row(doc,'Transactietype:',d.transaction_type||'N/A',y);
-    y=row(doc,'Bedrag / valuta:',(d.amount?Number(d.amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'N/A')+' '+(d.currency||'AWG'),y);
-    y=row(doc,'Specificatie transactie:',d.description||'N/A',y);
-    y=row(doc,'Indicator(en):',d.indicators||'N/A',y);
-    y=section(doc,'MLCO beoordeling',y+14);
-    y=row(doc,'Beslissing:',d.decision||'N/A',y);
-    y=row(doc,'Workflowstatus:',d.workflow_status||'N/A',y);
-    y=row(doc,'Rationale:',d.mlco_rationale||'N/A',y);
-    y=section(doc,'Demo-controle',y+14);
-    y=row(doc,'Status:','Fictional demo package only. No real FIU submission is performed from this page.',y);
-    doc.setFontSize(8); doc.setTextColor(90,90,90); doc.text('Generated from saved bank-statement MLCO case. Page 1 of 1',553,805,{align:'right'});
-    doc.save((safe(d.case_reference)||'FIU-transfer')+'.pdf');
+    const pdf=new jsPDF({unit:'mm',format:'a4'});
+    const subject=defaultSubject();
+    const total=3;
+    const caseRef=d.case_reference||'BSR-DEMO';
+    const inds=clean(d.indicators||'130103').split(',').map(x=>clean(x)).filter(Boolean);
+    const subjective=inds.some(i=>i==='130201'||i==='130202');
+    const rationale=d.mlco_rationale||'Transaction selected by MLCO for FIU reporting package preparation.';
+    const client='Blue Harbor Foundation VBA';
+    const company='Blue Harbor Operations VBA';
+    const amount=amountDisplay(d);
+    function title(){
+      pdf.setFillColor(0,0,0);pdf.rect(4,4,202,9,'F');
+      pdf.setTextColor(255,255,255);pdf.setFont('helvetica','bold');pdf.setFontSize(10);
+      pdf.text('MELDFORMULIER ONGEBRUIKELIJKE TRANSACTIES',105,10,{align:'center'});
+      pdf.setTextColor(0,0,0);
+    }
+    function bar(t,y){
+      pdf.setFillColor(0,0,0);pdf.rect(4,y,202,7,'F');
+      pdf.setTextColor(255,255,255);pdf.setFont('helvetica','bold');pdf.setFontSize(8.5);pdf.text(t,7,y+4.8);
+      pdf.setTextColor(0,0,0);return y+7;
+    }
+    function prow(a,y,g){
+      pdf.setFont('helvetica','normal');pdf.setFontSize(8);
+      a.forEach(r=>{
+        let l1=pdf.splitTextToSize(String(r[0]||''),94),l2=pdf.splitTextToSize(String(r[1]||''),94);
+        let h=Math.max(l1.length,l2.length)*4.2+4;
+        if(y+h>282){pdf.addPage();y=4;}
+        if(g){pdf.setFillColor(220,220,220);pdf.rect(4,y,202,h,'F');}
+        pdf.rect(4,y,101,h);pdf.rect(105,y,101,h);pdf.text(l1,7,y+5);pdf.text(l2,107,y+5);y+=h;
+      });
+      return y;
+    }
+    function foot(i){pdf.setFontSize(8);pdf.line(4,285,206,285);pdf.text(i+' / '+total,202,291,{align:'right'});}
+    function head(){
+      title();pdf.rect(4,13,202,40);
+      pdf.setFillColor(35,169,214);pdf.rect(94,13,20,40,'F');
+      pdf.setTextColor(255,255,255);pdf.setFont('helvetica','bold');pdf.setFontSize(12);pdf.text('FIU',104,35,{align:'center'});
+      pdf.setTextColor(0,0,0);pdf.setFont('helvetica','normal');pdf.setFontSize(11);pdf.text('Financial Intelligence Unit of Aruba',121,31);
+      pdf.setTextColor(0,130,180);pdf.text('MOT',121,38);pdf.setTextColor(0,0,0);
+    }
+    let y=53;
+    head();
+    y=bar('Naam melder',y);y=prow([['Handelsnaam:','Axioma']],y);
+    y=bar('Melding',y+7);y=prow([['Meldingsnummer:',caseRef]],y);
+    y=bar('Toelichting',y+9);y=prow([[rationale,'']],y);
+    y=bar('Indicator',y+9);y=prow([['Code',subjective?'Subjectieve Indicatoren':'Objectieve Indicatoren']].concat(inds.map(i=>[i,i==='130103'?'Een girale transactie van Afl. 500.000 of meer':i==='130104'?'Een contante transactie van Afl. 25.000 of meer':i==='130201'?'Aanleiding om te veronderstellen dat de transactie verband kan houden met witwassen':i==='130202'?'Aanleiding om te veronderstellen dat de transactie verband kan houden met terrorisme- of proliferatiefinanciering':'Indicator geselecteerd voor MLCO review'])),y,true);
+    foot(1);
+    pdf.addPage();y=4;
+    y=bar('Transactiegegevens',y);
+    y=prow([['Client:',client],['Aruba company:',company],['Datum transactie:',normalizeDate(d.transaction_date)],['Tijd:',normalizeTime(d.description)||normalizeTime(d.transaction_date)],['Stadium van transactie:','uitgevoerd'],['Transactietype:',d.transaction_type||'Giraal'],['Bedrag / valuta:',amount],['Bedrag, gespecificeerd per valutasoort:','']],y);
+    y=bar('Specificatie transactie',y+9);
+    y=prow([[`${subject.first} ${subject.last} (${subject.role})`,`${subject.isClient} Aruba`],['Transactieomschrijving:',d.description||'Selected bank-statement transaction'],['Workflowstatus:',d.workflow_status||d.decision||'FIU package queue']],y);
+    foot(2);
+    pdf.addPage();y=4;
+    y=bar('NATUURLIJKE PERSOON - '+subject.short,y);y=prow([[subject.role,'']],y);
+    y=bar('Subjectgegevens',y);y=prow([['Eigen naam:',subject.last],['Gehuwde naam:',subject.married],['Initialen:',subject.initials],['Voornamen:',subject.first],['Geslacht:',subject.gender],['Geboortedatum:',subject.birth],['Geboorteplaats:',subject.birthCity],['Geboorteland:',subject.birthCountry],['Land nationaliteit:',subject.nationality]],y);
+    y=bar('Legitimatiegegevens',y);y=prow([['Type:',subject.idType],['Nummer:',subject.idNumber],['Uitgiftedatum:',subject.idIssue],['Vervaldatum:',subject.idExpiry],['Plaats van uitgifte:',subject.idPlace],['Land van uitgifte:',subject.idCountry],['Land nationaliteit:',subject.nationality]],y);
+    y=bar('Adresgegevens',y);y=prow([['Straatnaam:',subject.street],['Huisnummer:',subject.house],['Toevoeging bij huisnummer:',subject.addon],['Plaats:',subject.city],['Postcode:',subject.postcode],['Land:',subject.country]],y);
+    y=bar('Telefoongegevens',y);y=prow([['Telefoonnummer:',subject.phone]],y);
+    y=bar('Email',y);y=prow([['Email adres:',subject.email]],y);
+    foot(3);
+    pdf.save('MOTWEB_'+safe(caseRef)+'.pdf');
   }
   function addButton(){
     const xmlBtn=$('stmtDownloadTransferXml');
